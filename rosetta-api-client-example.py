@@ -1,7 +1,7 @@
 '''
     Title: rosetta-api-client-example.py
     Authors: Dean Bunn and Wilson Miller
-    Last Edit: 2025-11-03
+    Last Edit: 2026-01-23
 '''
 
 from dotenv import load_dotenv
@@ -23,6 +23,34 @@ class Rosetta_API_Info:
         self.oath_token = ""
         self.test_id = ""
 
+#Class for Rosetta Person Information
+class Rosetta_Person_Info:
+    def __init__(self):
+        self.iam_id = ""
+        self.displayname = ""
+        self.birth_date = ""
+        self.manager_iam_id = ""
+        self.provisioning_status_primary = ""
+        self.name_lived_first_name = ""
+        self.name_lived_middle_name = ""
+        self.name_lived_last_name = ""
+        self.name_legal_first_name = ""
+        self.name_legal_middle_name = ""
+        self.name_legal_last_name = ""
+        self.id_iam_id = ""
+        self.id_login_id = ""
+        self.id_student_id = ""
+        self.id_mothra_id = ""
+        self.id_employee_id = ""
+        self.id_mail_id = ""
+        self.id_pidm = ""
+        self.email_primary = ""
+        self.email_work = ""
+        self.email_personal = ""
+        self.phone_primary = ""
+        self.phone_personal = ""
+        self.modified_date = ""
+
 #Initiate Rosetta API Information Class and Load Required Values from .env file
 ucdAPIInfo = Rosetta_API_Info()
 ucdAPIInfo.base_url = os.getenv("ROSETTA_BASE_URL")
@@ -36,7 +64,8 @@ if(len(ucdAPIInfo.client_id) > 0 and len(ucdAPIInfo.client_secret) > 0):
     #Configure OAuth Header
     headersOAuthCall = {"client_id": ucdAPIInfo.client_id,
                         "client_secret": ucdAPIInfo.client_secret,
-                        "grant_type":"CLIENT_CREDENTIALS"}
+                        "grant_type":"CLIENT_CREDENTIALS",
+                        "scope":"read:public read:sensitive"}
     
     #Make Rest Call to Token EndPoint to Get Access Token
     rtnTokenInfo = requests.post(ucdAPIInfo.token_url,headers=headersOAuthCall).json()
@@ -46,21 +75,26 @@ if(len(ucdAPIInfo.client_id) > 0 and len(ucdAPIInfo.client_secret) > 0):
         #Load Access Token (Good for 24 hours)
         ucdAPIInfo.oath_token = rtnTokenInfo['access_token']
 
-        #Var for Account EndPoint Uri with User IAM ID
-        accountsUri = ucdAPIInfo.base_url + "accounts?iamid=" + ucdAPIInfo.test_id
-
         #Var for Header of Regular Endpoint Call
         headerEPCall = {"Authorization":"Bearer " + ucdAPIInfo.oath_token}
 
-        #Make Rest Call to Pull Accounts Information
-        dataAccountInfo = requests.get(accountsUri,headers=headerEPCall).json()
+        #Var for People EndPoint Uri with User IAM ID
+        peopleUri = ucdAPIInfo.base_url + "people?iamid=" + ucdAPIInfo.test_id
 
-        #Loop Through Accounts Data
-        for account_info in dataAccountInfo:
-            #Look for UCPath Position Data
-            if(account_info['AccountName'] == "UCPath Position Entitlement"):
-               #Print out attributes 
-               print(json.dumps(account_info['attributes'], indent=4))
+        #Make Rest Call to Pull Accounts Information
+        peopleData = requests.get(peopleUri,headers=headerEPCall).json()
+
+        #Loop Through Returned Users (Example Should Only be One)
+        for peopleDatum in peopleData:
+            #Initiate Rosetta Person
+            ucdPersonInfo = Rosetta_Person_Info()
+            ucdPersonInfo.iam_id = peopleDatum['iam_id']
+
+            print(ucdPersonInfo.iam_id)
+
+
+
+        
 
 
 
