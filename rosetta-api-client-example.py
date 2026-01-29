@@ -10,54 +10,14 @@ import requests
 import datetime
 import json
 from pprint import pprint
+import rosetta_resources 
+
 
 #Load the .env file
 load_dotenv()
 
-#Class for Rosetta API Information
-class Rosetta_API_Info:
-    def __init__(self):
-        self.base_url = ""
-        self.token_url = ""
-        self.client_id = ""
-        self.client_secret = ""
-        self.oath_token = ""
-        self.test_id = ""
-
-#Class for Rosetta Person Information
-class Rosetta_Person_Info:
-    def __init__(self):
-        self.iam_id = ""
-        self.displayname = ""
-        self.birth_date = ""
-        self.manager_iam_id = ""
-        self.provisioning_status_primary = ""
-        self.name_lived_first_name = ""
-        self.name_lived_middle_name = ""
-        self.name_lived_last_name = ""
-        self.name_legal_first_name = ""
-        self.name_legal_middle_name = ""
-        self.name_legal_last_name = ""
-        self.id_iam_id = ""
-        self.id_login_id = ""
-        self.id_student_id = ""
-        self.id_mothra_id = ""
-        self.id_employee_id = ""
-        self.id_mail_id = ""
-        self.id_pidm = ""
-        self.email_primary = ""
-        self.email_work = ""
-        self.email_personal = ""
-        self.phone_primary = ""
-        self.phone_personal = ""
-        self.modified_date = ""
-        self.affiliation = []
-        self.employment_status = []
-        self.student_association = []
-        self.payroll_association = []
-
 #Initiate Rosetta API Information Class and Load Required Values from .env file
-ucdAPIInfo = Rosetta_API_Info()
+ucdAPIInfo = rosetta_resources.Rosetta_API_Info()
 ucdAPIInfo.base_url = os.getenv("ROSETTA_BASE_URL")
 ucdAPIInfo.client_id = os.getenv("ROSETTA_CLIENT_ID")
 ucdAPIInfo.client_secret = os.getenv("ROSETTA_CLIENT_SECRET")
@@ -94,7 +54,7 @@ if(len(ucdAPIInfo.client_id) > 0 and len(ucdAPIInfo.client_secret) > 0):
         for peopleDatum in peopleData:
 
             #Initiate Rosetta Person
-            ucdPersonInfo = Rosetta_Person_Info()
+            ucdPersonInfo = rosetta_resources.Rosetta_Person_Info()
 
             #Check for IAM ID
             if "iam_id" in peopleDatum:
@@ -228,7 +188,51 @@ if(len(ucdAPIInfo.client_id) > 0 and len(ucdAPIInfo.client_secret) > 0):
                     ucdPersonInfo.affiliation.append(ucdafl)
 
             
-            #
+            #Check for Payroll Associations
+            if "payroll_association" in peopleDatum and len(peopleDatum['payroll_association']) > 0:
+
+                #Loop Through Each Payroll Association
+                for ucdpa in peopleDatum['payroll_association']:
+
+                    #Initiate Custom Class for Reporting a Payroll Association
+                    ucdPayrollAssoc = rosetta_resources.Rosetta_Payroll_Association()
+                    ucdPayrollAssoc.employee_record = ucdpa['employee_record']
+                    ucdPayrollAssoc.employee_id = ucdpa['employee_id']
+                    ucdPayrollAssoc.position_number = ucdpa['position_number']
+                    ucdPayrollAssoc.position_title = ucdpa['position_title']
+                    ucdPayrollAssoc.relationship_to_organization = ucdpa['relationship_to_organization']
+                    ucdPayrollAssoc.employee_classification = ucdpa['employee_classification']
+                    ucdPayrollAssoc.employee_classification_description = ucdpa['employee_classification_description']
+                    ucdPayrollAssoc.status = ucdpa['status']
+                    ucdPayrollAssoc.hire_date = ucdpa['hire_date']
+                    ucdPayrollAssoc.start_date = ucdpa['start_date']
+                    ucdPayrollAssoc.termination_date = ucdpa['termination_date']
+                    ucdPayrollAssoc.fte_percentage = ucdpa['fte_percentage']
+                    ucdPayrollAssoc.reports_to_position = ucdpa['reports_to_position']
+                    ucdPayrollAssoc.job_type_id = ucdpa['job_type_id']
+                    ucdPayrollAssoc.job_type_description = ucdpa['job_type_description']
+                    ucdPayrollAssoc.job_family_id = ucdpa['job_family_id']
+                    ucdPayrollAssoc.job_family_description = ucdpa['job_family_description']
+                    ucdPayrollAssoc.organization_id = ucdpa['organization_id']
+                    ucdPayrollAssoc.organization_title = ucdpa['organization_title']
+                    ucdPayrollAssoc.division_id = ucdpa['division_id']
+                    ucdPayrollAssoc.division_title = ucdpa['division_title']
+                    ucdPayrollAssoc.subdivision_id = ucdpa['subdivision_id']
+                    ucdPayrollAssoc.subdivision_title = ucdpa['subdivision_title']
+                    ucdPayrollAssoc.business_unit_id = ucdpa['business_unit_id']
+                    ucdPayrollAssoc.business_unit_title = ucdpa['business_unit_title']
+                    ucdPayrollAssoc.department_id = ucdpa['department_id']
+                    ucdPayrollAssoc.department_title = ucdpa['department_title']
+                    ucdPayrollAssoc.department_short_title = ucdpa['department_short_title']
+
+                    #Add Payroll Association to UCD Person Information
+                    ucdPersonInfo.payroll_association.append(ucdPayrollAssoc)
+
+            
+            #Check for Student Associations
+            
+
+           
 
             pprint(ucdPersonInfo.__dict__)
 
