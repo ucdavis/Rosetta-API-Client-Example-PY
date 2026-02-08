@@ -1,7 +1,7 @@
 '''
     Title: rosetta-api-client-example.py
     Authors: Dean Bunn and Wilson Miller
-    Last Edit: 2026-01-23
+    Last Edit: 2026-02-07
 '''
 
 from dotenv import load_dotenv
@@ -67,6 +67,10 @@ if(len(ucdAPIInfo.client_id) > 0 and len(ucdAPIInfo.client_secret) > 0):
             #Check for Birth Date
             if "birth_date" in peopleDatum:
                 ucdPersonInfo.birth_date = peopleDatum['birth_date']
+
+            #Check for Modified Date
+            if "modified_date" in peopleDatum:
+                ucdPersonInfo.modified_date = peopleDatum['modified_date']
 
             #Check for Manager IAM ID
             if "manager_iam_id" in peopleDatum:
@@ -187,7 +191,40 @@ if(len(ucdAPIInfo.client_id) > 0 and len(ucdAPIInfo.client_secret) > 0):
                 for ucdafl in peopleDatum['affiliation']:
                     ucdPersonInfo.affiliation.append(ucdafl)
 
-            
+
+            #Check for Student Associations
+            if "student_association" in peopleDatum and len(peopleDatum['student_association']) > 0:
+
+                #Loop Through Each Student Association
+                for ucdsa in peopleDatum['student_association']:
+
+                    #Initiate Custom Class for Reporting a Student Association
+                    ucdStudentAssoc = rosetta_resources.Rosetta_Student_Association()
+
+                    #Loop Through Each Student Association Properties
+                    for ucdsaprop in ucdsa:
+                        
+                        if "academic_level" in ucdsaprop:
+                            ucdStudentAssoc.academic_level = ucdsaprop['academic_level']
+                            
+
+                        if "class_level" in ucdsaprop:
+                            ucdStudentAssoc.class_level = ucdsaprop['class_level']
+
+
+                        if "college" in ucdsaprop:
+                            ucdStudentAssoc.college = ucdsaprop['college']
+
+
+                        if "major" in ucdsaprop:
+                            ucdStudentAssoc.major = ucdsaprop['major']
+                            
+
+                    #Add Student Association to UCD Person Information
+                    ucdPersonInfo.student_association.append(ucdStudentAssoc)
+
+
+
             #Check for Payroll Associations
             if "payroll_association" in peopleDatum and len(peopleDatum['payroll_association']) > 0:
 
@@ -227,12 +264,8 @@ if(len(ucdAPIInfo.client_id) > 0 and len(ucdAPIInfo.client_secret) > 0):
 
                     #Add Payroll Association to UCD Person Information
                     ucdPersonInfo.payroll_association.append(ucdPayrollAssoc)
-
-            
-            #Check for Student Associations
-            
-
            
+
 
             pprint(ucdPersonInfo.__dict__)
 

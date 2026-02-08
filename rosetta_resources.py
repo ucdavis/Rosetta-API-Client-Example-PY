@@ -3,7 +3,7 @@
 '''
     Title: rosetta_resources.py
     Authors: Dean Bunn and Wilson Miller
-    Last Edit: 2026-01-27
+    Last Edit: 2026-02-07
 '''
 
 #Class for Rosetta API Information
@@ -48,6 +48,16 @@ class Rosetta_Person_Info:
         self.employment_status = []
         self.student_association = []
         self.payroll_association = []
+
+
+
+#Class for Rosetta Student Association
+class Rosetta_Student_Association:
+    def __init__(self):
+        self.academic_level = ""
+        self.class_level = ""
+        self.college = ""
+        self.major = ""
 
 
 
