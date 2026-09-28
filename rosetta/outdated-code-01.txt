@@ -30,7 +30,7 @@ if(len(ucdAPIInfo.client_id) > 0 and len(ucdAPIInfo.client_secret) > 0):
     headersOAuthCall = {"client_id": ucdAPIInfo.client_id,
                         "client_secret": ucdAPIInfo.client_secret,
                         "grant_type":"CLIENT_CREDENTIALS",
-                        "scope":"read:public read:sensitive"}
+                        "scope":"read:public"}
     
     #Make Rest Call to Token EndPoint to Get Access Token
     rtnTokenInfo = requests.post(ucdAPIInfo.token_url,headers=headersOAuthCall).json()
