@@ -1,7 +1,7 @@
 
 
 #Class for Rosetta Employee Association
-class Rosetta_Employee_Association:
+class RosettaEmployeeAssociation:
     def __init__(self):
         self.employee_record = ""
         self.employee_id = ""
