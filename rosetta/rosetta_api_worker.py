@@ -1,6 +1,6 @@
 import os
 import requests
-import datetime
+from datetime import datetime, timedelta
 import json
 
 from .rosetta_person import RosettaPerson
@@ -27,6 +27,41 @@ class RosettaAPIWorker:
         self.client_id = client_id
         self.client_secret = client_secret
         self.oath_token = ""
-        self.expires_in = ""
+        self.expires_in = datetime.now() + timedelta(hours=-1)
+
+    def check_oauth_token(self) -> bool:
+        #Var for Return Status
+        b_token_status = True
+
+        if self.expires_in < datetime.now() + timedelta(minutes=1):
+
+            #Configure OAuth Header
+            headersOAuthCall = {"client_id": self.client_id,
+                                "client_secret": self.client_secret,
+                                "grant_type":"CLIENT_CREDENTIALS",
+                                "scope":"read:public"}
+
+            #Make Rest Call to Token EndPoint to Get Access Token
+            responseTokenInfo = requests.post(self.token_url,headers=headersOAuthCall)
+
+            if(responseTokenInfo.status_code == 200):
+
+                #Var for Response Headers
+                responseHeaders = responseTokenInfo.headers
+
+                #Var for Response Json Data
+                responseData = responseTokenInfo.json()
+                  
+                if(len(responseData['access_token']) > 0):
+                    self.oath_token = responseData['access_token']
+                    self.expires_in = datetime.now() + timedelta(seconds=responseData['expires_in'])
+                else:
+                    b_token_status = False
+
+            else:
+                b_token_status = False
+                
+
+        return b_token_status
 
 

@@ -1,6 +1,7 @@
 
 from dotenv import load_dotenv
 import os
+from datetime import datetime, timedelta
 
 #Import Rosetta Classes
 from rosetta import RosettaAPIWorker, RosettaPerson, RosettaEmployeeAssociation, RosettaStudentAssociation
@@ -18,7 +19,9 @@ def main():
                                         os.getenv("ROSETTA_CLIENT_SECRET"))
 
     
-    
+    print(rosetta_api_wrkr.check_oauth_token())
+    print(rosetta_api_wrkr.oath_token)
+    print(rosetta_api_wrkr.expires_in)
     
 
 
