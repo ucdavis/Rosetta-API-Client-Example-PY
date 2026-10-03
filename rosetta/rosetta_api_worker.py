@@ -1,7 +1,8 @@
 import os
 import requests
-from datetime import datetime, timedelta
 import json
+from datetime import datetime, timedelta
+from enum import StrEnum
 
 from .rosetta_person import RosettaPerson
 from .rosetta_employee_association import RosettaEmployeeAssociation
@@ -28,6 +29,31 @@ class RosettaAPIWorker:
         self.client_secret = client_secret
         self.oath_token = ""
         self.expires_in = datetime.now() + timedelta(hours=-1)
+
+    class PeopleSearchBy(StrEnum):
+        IAMID = "iamid"
+        LOGINID = "loginid"
+        EMAIL = "email"
+        EMPLOYEEID = "employeeid"
+        STUDENTID = "studentid"
+        MAILID = "mailid"
+        DEPARTMENT = "department"
+
+    class EmployeeSearchBy(StrEnum):
+        IAMID = "iamid"
+        DEPARTMENTID = "departmentid"
+        DIVISIONID = "divisionid"
+        SUBDIVISIONID = "subdivisionid"
+        SUBDIVISIONL4ID = "subdivisionl4id"
+        ORGANIZATIONID = "organizationid"
+
+    class StudentSearchBy(StrEnum):
+        IAMID = "iamid"
+        PIDM = "pidm"
+        STUDENTID = "studentid"
+        MAJORCODE = "majorcode"
+        COLLEGECODE = "collegecode"
+
 
     def check_oauth_token(self) -> bool:
         #Var for Return Status
@@ -63,5 +89,34 @@ class RosettaAPIWorker:
                 
 
         return b_token_status
+
+
+    def get_people_by_search_term(self,search_by: PeopleSearchBy, search_term: str) -> list[RosettaPerson]:
+        #Var for Returned People List
+        people = []
+
+        #Var for Search Result Limit
+        n_srch_rslt_limit = 100
+
+        #Var for Search Result Offset
+        n_srch_rslt_offset = 0
+
+        #Var for Retrieve More Search Results
+        b_retr_more_srch_rslts = True
+
+        while True:
+            if self.check_oauth_token():
+                #Var for Header of People EndPoint Call
+                headerEPCall = {"Authorization":"Bearer " + self.oath_token}
+
+                #Var for URI
+                peopleUri = self.base_url + "people?" + search_by + "=" + search_term + "&offset=" + str(n_srch_rslt_offset) + "&limit=" + str(n_srch_rslt_limit) + "&count=true"
+
+                print(peopleUri)
+            
+            if b_retr_more_srch_rslts == True:
+                break
+
+        return people
 
 

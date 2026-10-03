@@ -18,10 +18,8 @@ def main():
                                         os.getenv("ROSETTA_CLIENT_ID"),
                                         os.getenv("ROSETTA_CLIENT_SECRET"))
 
-    
-    print(rosetta_api_wrkr.check_oauth_token())
-    print(rosetta_api_wrkr.oath_token)
-    print(rosetta_api_wrkr.expires_in)
+
+    testing = rosetta_api_wrkr.get_people_by_search_term(rosetta_api_wrkr.PeopleSearchBy.IAMID,"567883222")
     
 
 
